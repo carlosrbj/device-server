@@ -1,0 +1,11 @@
+/home/carlos/git/device-server/src/main/java/br/com/hsob/scannerserver/repository/AbstractService.java
+/home/carlos/git/device-server/src/main/java/br/com/hsob/scannerserver/ServerApplication.java
+/home/carlos/git/device-server/src/main/java/br/com/hsob/scannerserver/utils/IConvertData.java
+/home/carlos/git/device-server/src/main/java/br/com/hsob/scannerserver/repository/ScannerServerMongoDb.java
+/home/carlos/git/device-server/src/main/java/br/com/hsob/scannerserver/model/ScannerPoll.java
+/home/carlos/git/device-server/src/main/java/br/com/hsob/scannerserver/utils/ConvertData.java
+/home/carlos/git/device-server/src/main/java/br/com/hsob/scannerserver/service/ScannerService.java
+/home/carlos/git/device-server/src/main/java/br/com/hsob/scannerserver/controller/ScannerController.java
+/home/carlos/git/device-server/src/main/java/br/com/hsob/scannerserver/configurations/MongoConfig.java
+/home/carlos/git/device-server/src/main/java/br/com/hsob/scannerserver/model/State.java
+/home/carlos/git/device-server/src/main/java/br/com/hsob/scannerserver/model/Scanner.java

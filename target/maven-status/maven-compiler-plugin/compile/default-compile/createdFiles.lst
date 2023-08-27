@@ -1,0 +1,11 @@
+br/com/hsob/scannerserver/configurations/MongoConfig.class
+br/com/hsob/scannerserver/utils/ConvertData.class
+br/com/hsob/scannerserver/service/ScannerService.class
+br/com/hsob/scannerserver/repository/AbstractService.class
+br/com/hsob/scannerserver/ServerApplication.class
+br/com/hsob/scannerserver/controller/ScannerController.class
+br/com/hsob/scannerserver/utils/IConvertData.class
+br/com/hsob/scannerserver/model/ScannerPoll.class
+br/com/hsob/scannerserver/model/State.class
+br/com/hsob/scannerserver/repository/ScannerServerMongoDb.class
+br/com/hsob/scannerserver/model/Scanner.class
