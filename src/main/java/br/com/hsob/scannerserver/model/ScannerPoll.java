@@ -24,7 +24,7 @@ public class ScannerPoll {
         this.code = code;
         this.lastCalibration = lastCalibration;
         this.device = device;
-        if (Objects.isNull(state)) state = new State("connected","green", false, true);
+        if (Objects.isNull(state)) state = new State("connected","red", false, true);
         this.state = state;
     }
 
