@@ -11,28 +11,26 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
-
 /**
  * @author carlos
  */
 @Service
 public class ScannerService extends AbstractService {
-    private static final String OFFLINE = "offline";
-    private static final String ONLINE = "online";
 
     public ScannerResponse checkScannerStatus(String code){
         var scanner = hsobdb.findOne(new Query(Criteria.where("code").is(code.toUpperCase())), Scanner.class);
         ScannerPoll scannerPoll = null;
         ScannerResponse scannerResponse = null;
 
-        if (Objects.isNull(scanner)){
+        if (Objects.nonNull(scanner)){
+            scannerPoll = checkScannerPoll(scanner);
+            verifyStatus(scannerPoll);
+        } else {
             scanner = new Scanner(code.toUpperCase());
             hsobdb.save(scanner);
-            scannerPoll = checkScannerPoll(scanner);
-        } else {
-            scannerPoll = checkScannerPoll(scanner);
-            verifyIsOnline(scannerPoll);
         }
+
+        scannerPoll = checkScannerPoll(scanner);
         scannerResponse = new ScannerResponse(scannerPoll);
         return scannerResponse;
     }
@@ -48,53 +46,51 @@ public class ScannerService extends AbstractService {
             scannerPoll.getState().setLabel("connected");
             scannerPoll.getState().setOnline(true);
             scannerPoll.getState().setLed("green");
-            scannerPoll.getState().setCalibrated(true);
+            scannerPoll.setLastCalibration(System.currentTimeMillis());
             Update update = new Update();
             update.set("state", scannerPoll.getState());
-            update.set("lastCalibration", System.currentTimeMillis());
             hsobdb.updateFirst(query, update, ScannerPoll.class);
             scannerPoll = checkScannerPoll(scanner);
-            scannerResponse = new ScannerResponse(scannerPoll);
         }else {
             Scanner newScanner = hsobdb.save(new Scanner(code.toUpperCase()));
             scannerPoll = checkScannerPoll(newScanner);
-            scannerResponse = new ScannerResponse(scannerPoll);
         }
+        scannerResponse = new ScannerResponse(scannerPoll);
 
         return scannerResponse;
     }
 
-    private void verifyIsOnline(ScannerPoll scannerPoll) {
+    private void verifyStatus(ScannerPoll scannerPoll) {
         Query query = new Query(Criteria.where("code").is(scannerPoll.getCode().toUpperCase()));
         Update update = new Update();
 
-        if (scannerPoll.getState().getOnline() && System.currentTimeMillis() - scannerPoll.getLastCalibration() < 60000){
-            scannerPoll.getState().setLabel("connected");
-            scannerPoll.getState().setLed("green");
-
-            if (!verifyCalibrationStatus(scannerPoll)){
-                scannerPoll.getState().setLabel("need_calibrate");
-                scannerPoll.getState().setLed("yellow");
-                scannerPoll.getState().setCalibrated(false);
-            }
-        } else  {
+        if (!verifyIsOnline(scannerPoll) && verifyCalibrationStatus(scannerPoll)){
             scannerPoll.getState().setLabel("disconnected");
             scannerPoll.getState().setLed("red");
             scannerPoll.getState().setOnline(false);
+        } else if (!verifyCalibrationStatus(scannerPoll)){
+            scannerPoll.getState().setLabel("need_calibrate");
+            scannerPoll.getState().setLed("yellow");
+            scannerPoll.getState().setCalibrated(false);
+            scannerPoll.getState().setOnline(verifyIsOnline(scannerPoll));
         }
         update.set("state", scannerPoll.getState());
         hsobdb.updateFirst(query, update, ScannerPoll.class);
     }
 
     private boolean verifyCalibrationStatus(ScannerPoll scannerPoll) {
-        return System.currentTimeMillis() - scannerPoll.getLastCalibration() <= 180000;
+        return System.currentTimeMillis() - scannerPoll.getLastCalibration() < 180000;
+    }
+
+    private boolean verifyIsOnline(ScannerPoll scannerPoll) {
+        return System.currentTimeMillis() - scannerPoll.getLastConnection() > 60000;
     }
 
     private ScannerPoll checkScannerPoll(Scanner scanner) {
         Query query = new Query(Criteria.where("code").is(scanner.getCode().toUpperCase()));
         var scannerPoll = hsobdb.findOne(query, ScannerPoll.class);
         if (Objects.isNull(scannerPoll)) {
-            hsobdb.save(new ScannerPoll(scanner.getCode(), scanner.getLastCalibration(), scanner.getDevice(), null));
+            hsobdb.save(new ScannerPoll(scanner.getCode(), scanner.getLastCalibration(), System.currentTimeMillis(), scanner.getDevice(), null));
             scannerPoll = hsobdb.findOne(query, ScannerPoll.class);
             return Objects.requireNonNull(scannerPoll);
         }

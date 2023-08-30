@@ -16,15 +16,17 @@ public class ScannerPoll {
     private ObjectId id;
     private String code;
     private Long lastCalibration;
+    private Long lastConnection;
     private String device;
     private State state;
 
-    public ScannerPoll(String code, Long lastCalibration, String device, State state) {
+    public ScannerPoll(String code, Long lastCalibration, Long lastConnection, String device, State state) {
         this.id = new ObjectId();
         this.code = code;
         this.lastCalibration = lastCalibration;
+        this.lastConnection = lastConnection;
         this.device = device;
-        if (Objects.isNull(state)) state = new State("connected","red", false, true);
+        if (Objects.isNull(state)) state = new State("connected","red", false, false);
         this.state = state;
     }
 
@@ -46,6 +48,14 @@ public class ScannerPoll {
 
     public void setLastCalibration(Long lastCalibration) {
         this.lastCalibration = lastCalibration;
+    }
+
+    public Long getLastConnection() {
+        return lastConnection;
+    }
+
+    public void setLastConnection(Long lastConnection) {
+        this.lastConnection = lastConnection;
     }
 
     public String getDevice() {

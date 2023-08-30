@@ -1,7 +1,6 @@
 package br.com.hsob.scannerserver.controller;
 
 import br.com.hsob.scannerserver.model.ScannerResponse;
-import br.com.hsob.scannerserver.model.ScannerPoll;
 import br.com.hsob.scannerserver.service.ScannerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
